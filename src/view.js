@@ -6,6 +6,8 @@ import menuView from './view/menu';
 import uiView from './view/ui';
 import debugView from './view/debug';
 
+import effectsView from './view/effects';
+
 export default function view(ctrl, g, assets) {
 
   const { width, height } = ctrl.data;
@@ -16,13 +18,18 @@ export default function view(ctrl, g, assets) {
   const menu = new menuView(ctrl, g);
   const debug = new debugView(ctrl, g);
 
+  const effects = new effectsView(ctrl, g);
+
   this.render = ctrl => {
+    let views;
 
     back.render(ctrl);
-    const views = play.render(ctrl);
+    //views = play.render(ctrl);
     //ui.render(ctrl);
     //menu.render(ctrl);
     //pdebug.render(ctrl);
+    effects.render(ctrl);
+
     return views;
   };
 

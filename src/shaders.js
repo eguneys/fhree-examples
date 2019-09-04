@@ -15,6 +15,7 @@ import pFUtilShader from './shaders/util.partial.frag';
 // remove on production
 import pFEffectsShader from './shaders/effects.partial.frag';
 import fDebugShader from './shaders/debug.frag';
+import fEffectsShader from './shaders/effects.frag';
 
 const partialShaders = {
   'futil': pFUtilShader,
@@ -30,7 +31,8 @@ const rawShaders = {
   'vtexture': vTextureShader,
   'ftexture': fTextureShader,
   'fbg': fBackgroundShader,
-  'fdebug': fDebugShader
+  'fdebug': fDebugShader,
+  'feffects': fEffectsShader
 };
 
 const regexInclude = /#include (\w+)/;
@@ -49,7 +51,8 @@ export const programMap = ({
   'font': shaderPair('ftexture', 'vfont'),
   'background': shaderPair('fbg'),
   'tile': shaderPair('fempty'),
-  'debugbg': shaderPair('fdebug')
+  'debugbg': shaderPair('fdebug'),
+  'effects': shaderPair('feffects')
 });
 
 

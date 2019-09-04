@@ -112,3 +112,49 @@ void colGlowyCircle(out vec4 col, vec2 p) {
   col = vec4(ring * 0.3, ring+ 0.05, ring - 0.05, 1.0);
   
 }
+
+
+void mergeCircle(out vec4 col, vec2 p) {
+  
+  float radius = 0.1;
+  float trail = 0.5;
+  float extend = 0.3;
+
+  float trail1 = usin(uTime * 0.01);
+
+  float d = 1.0;
+
+  float d1 = sdCircle(translate(p, vec2(0.0, radius * 6.0 * trail + trail1 * extend)),
+                     radius);
+  float b1 = sdBox(translate(p, vec2(0.0, trail1 * extend * 0.5)), 
+                   vec2(radius, radius * 6.0 * trail + trail1 * extend / 2.0));
+  
+
+
+  float d2 = sdCircle(translate(p, vec2(-radius*4.0, radius * 6.0 * trail)), radius);
+  float b2 = sdBox(translate(p, vec2(-radius*4.0, 0.0)), 
+                   vec2(radius, radius * 6.0 * trail));
+
+
+
+  float d3 = sdCircle(translate(p, vec2(-radius *2.0, radius*6.0 * trail)), radius);
+  float b3 = sdBox(translate(p, vec2(-radius*2.0, 0.0)), 
+                   vec2(radius, radius * 6.0 * trail));
+
+
+  float d4 = sdCircle(translate(p, vec2(radius*2.0, 0.0)), radius);
+  float d5 = sdCircle(translate(p, vec2(radius*4.0, 0.0)), radius);
+
+
+  float t1 = opUnion(d1, b1);
+  float t2 = opUnion(d2, b2);
+  float t3 = opSubtraction(d3, b3);
+
+  d = opUnion(d, t1);
+  d = opUnion(d, t2);
+  d = opUnion(d, t3);
+  d = opUnion(d, d4);
+  d = opUnion(d, d5);
+  
+  col = mix(col, colBlack, 1.0-smoothstep(-0.01, 0.01, d));
+}
