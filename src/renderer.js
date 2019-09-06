@@ -6,6 +6,7 @@ import Renderer from './fhree/renderer';
 export default function makeRenderer(gl) {
 
   const camera = new Camera();
+  camera.pos[2] = 400;
 
   const renderer = new Renderer(gl, camera);
 

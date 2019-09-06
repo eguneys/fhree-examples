@@ -17,12 +17,18 @@ export default function Graphics(gl) {
     program,
     uniforms,
     textureInfos,
-    bufferInfos
+    bufferInfos,
+    indices
   }) => {
 
     textureInfos = textureInfos || [];
 
-    let vao = makeVao(gl, bufferInfos.map(_ => _.apply(gl, program)));
+    let vao = makeVao(gl, 
+                      indices,
+                      bufferInfos
+                      .map(_ => _.apply(gl, program)));
+
+
 
     return {
       name,
@@ -34,11 +40,11 @@ export default function Graphics(gl) {
   };
 
 
-  this.addDrawInfo = (drawInfo, uniforms, numVertices) => {
-    addDrawInfo(drawInfo, uniforms, numVertices);
+  this.addDrawInfo = (drawInfo, uniforms, numElements) => {
+    addDrawInfo(drawInfo, uniforms, numElements);
   };
 
-  const addDrawInfo = (drawInfo, uniformArgs, numVertices = 6) => {
+  const addDrawInfo = (drawInfo, uniformArgs, numElements) => {
     const cookUniforms = Object.keys(drawInfo.uniforms).map(key => {
       let setter = drawInfo.uniforms[key];
       let args = uniformArgs[key];
@@ -49,7 +55,7 @@ export default function Graphics(gl) {
         setter(...args);
       };
     });
-    this.minibatch.push({...drawInfo, uniforms: cookUniforms, numVertices });
+    this.minibatch.push({...drawInfo, uniforms: cookUniforms, numElements });
   };
   
   this.render = () => {
@@ -62,7 +68,7 @@ export default function Graphics(gl) {
       uniforms,
       textureInfos,
       vao,
-      numVertices
+      numElements
     }) => {
 
       gl.useProgram(program);
@@ -78,14 +84,19 @@ export default function Graphics(gl) {
 
       uniforms.forEach(_ => _());
 
-      gl.drawArrays(gl.TRIANGLES, 0, numVertices);
+      
+
+      // gl.drawArrays(gl.TRIANGLES, 0, numVertices);
+
+      gl.drawElements(gl.TRIANGLES, numElements, gl.UNSIGNED_SHORT, 0);
+
     });
 
     this.minibatch = [];
   };
 }
 
-const makeVao = (gl, bufferInfos) => {
+const makeVao = (gl, indices, bufferInfos) => {
   let vao = gl.createVertexArray();
   gl.bindVertexArray(vao);
 
@@ -105,6 +116,16 @@ const makeVao = (gl, bufferInfos) => {
     gl.enableVertexAttribArray(index);
 
   });
+
+  let indexBuffer = gl.createBuffer();
+  
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+
+  // https://stackoverflow.com/questions/38948908/vbo-and-ebo-state-in-webgl
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
+                new Uint16Array(indices),
+                gl.STATIC_DRAW);
+  
 
   gl.bindVertexArray(null);
 
@@ -146,12 +167,16 @@ export function makeTextureInfoForUniform(name) {
   };
 }
 
-export function makeBufferInfoForAttribute(name, size) {
+export function makeBufferInfoForAttribute(name, {
+  target,
+  size }) {
   let gl, buffer;
 
-  this.set = (array, drawType) => {
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(array), drawType);
+  this.set = (array, {
+    drawType = gl.STATIC_DRAW
+  }) => {
+    gl.bindBuffer(target, buffer);
+    gl.bufferData(target, new Float32Array(array), drawType);
   },
 
   this.apply = (_gl, program) => {
@@ -160,6 +185,7 @@ export function makeBufferInfoForAttribute(name, size) {
     return {
       buffer,
       size,
+      target,
       index: gl.getAttribLocation(program, name)
     };
   };

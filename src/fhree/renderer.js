@@ -43,7 +43,11 @@ export default function Renderer(gl, camera) {
          console.warn("Undefined geometry for mesh " + name);
        }
 
-       const aPosInfo = new G.makeBufferInfoForAttribute("aPosition", 3);
+       const aPosInfo = new G.makeBufferInfoForAttribute
+       ("aPosition", { target: g.gl.ARRAY_BUFFER,
+                       size: 3 });
+
+
        const mesh = g.makeDraw({
          name,
          program,
@@ -52,10 +56,11 @@ export default function Renderer(gl, camera) {
          },
          bufferInfos: [
            aPosInfo
-         ]
+         ],
+         indices: geometry.indices
        });
 
-       aPosInfo.set(geometry, g.gl.STATIC_DRAW);
+       aPosInfo.set(geometry.vertices, g.gl.STATIC_DRAW);
        
        return mesh;
      })
@@ -97,7 +102,7 @@ export default function Renderer(gl, camera) {
       uMatrix: [transform]
     };
 
-    g.addDrawInfo(drawInfoPool.acquire(), uniforms, 3);
+    g.addDrawInfo(drawInfoPool.acquire(), uniforms, 6);
   };
 
   this.render = () => {

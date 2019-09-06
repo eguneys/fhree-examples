@@ -12,7 +12,8 @@ export default function view(ctrl, r) {
 
     r.drawMesh('sample', {
       transform: 'root',
-      translate: [0.1, 0.1, 2.0]
+      translate: [0.1, 0.1, 2.0],
+      rotate: [0.0, 0.0, 1.0]
     });
 
   };
