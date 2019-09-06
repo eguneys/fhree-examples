@@ -304,6 +304,8 @@ export function transform(m, { translate: _translate,
 
   if (_rotate) {
     m = xRotate(m, _rotate[0]);
+    m = yRotate(m, _rotate[1]);
+    m = zRotate(m, _rotate[2]);
   }
 
   if (_scale) {

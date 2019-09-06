@@ -1,9 +1,9 @@
 import * as u from '../util';
 
-export default function Camera(fov = u.rad(70), 
-                               aspect = 1,
-                               near = 1,
-                               far = 2000) {
+export default function Camera({ fov = u.rad(70), 
+                                 aspect = 1,
+                                 near = 1,
+                                 far = 2000 }) {
 
   this.fov = fov;
   this.aspect = aspect;

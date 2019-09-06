@@ -3,10 +3,10 @@ import { meshMap } from './meshes';
 import Camera from './fhree/camera';
 import Renderer from './fhree/renderer';
 
-export default function makeRenderer(gl) {
+export default function makeRenderer(gl, aspect) {
 
-  const camera = new Camera();
-  camera.pos[2] = 400;
+  const camera = new Camera({ aspect });
+  camera.pos[2] = 1000;
 
   const renderer = new Renderer(gl, camera);
 

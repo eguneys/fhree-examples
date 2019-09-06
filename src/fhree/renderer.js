@@ -69,12 +69,18 @@ export default function Renderer(gl, camera) {
 
   this.makeTransform = (name, transform) => {
 
-    transforms[name] = getTransform(transform);
+    transforms[name] = modelMatrix(transform);
 
   };
 
-  const getTransform = transform => {
+  const modelMatrix = transform => {
+    let matrix = transforms[transform.transform] || mat4.identity();
 
+    return mat4.transform(matrix, transform);
+  };
+
+
+  const mvpMatrix = modelMatrix => {
     const { pos: camPos, target, up } = camera;
     const { fov, aspect, near, far } = camera;
 
@@ -85,13 +91,13 @@ export default function Renderer(gl, camera) {
 
     let viewProjectionMatrix = mat4.multiply(projectionMatrix, viewMatrix);
 
-    return mat4.transform(viewProjectionMatrix, transform);
+    return mat4.multiply(viewProjectionMatrix, modelMatrix);
   };
-
 
   this.drawMesh = (name, transform) => {
 
-    transform = getTransform(transform);
+    const uMatrix = mvpMatrix(modelMatrix(transform));
+
     let drawInfoPool = drawInfos[name];
 
     if (!drawInfoPool) {
@@ -99,7 +105,7 @@ export default function Renderer(gl, camera) {
     }
 
     let uniforms = {
-      uMatrix: [transform]
+      uMatrix: [uMatrix]
     };
 
     g.addDrawInfo(drawInfoPool.acquire(), uniforms, 6);

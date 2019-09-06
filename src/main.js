@@ -31,7 +31,8 @@ export function app(element, options) {
         bounds: canvas.getBoundingClientRect()
       };
 
-      let { camera, renderer } = makeRenderer(gl);
+      let aspect = 1/state.game.ratio;
+      let { camera, renderer } = makeRenderer(gl, aspect);
 
       let ctrl = new makeCtrl(state);
       let view = new makeView(ctrl, renderer, assets);
@@ -40,7 +41,7 @@ export function app(element, options) {
         ctrl.update(delta);
         view.render(ctrl);
         renderer.render();
-      }, 1).start();
+      }, 10).start();
 
       events.bindDocument(ctrl);
 
