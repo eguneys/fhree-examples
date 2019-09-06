@@ -2,7 +2,7 @@
 
 precision mediump float;
 
-in vec2 aPosition;
+in vec4 aPosition;
 
 in vec2 aTexCoord;
 
@@ -10,14 +10,14 @@ out vec2 vQuadCoord;
 
 uniform vec2 uResolution;
 
-uniform mat3 uMatrix;
+uniform mat4 uMatrix;
 
 void main() {
 
-  vec2 position = (uMatrix * vec3(aPosition, 1)).xy;
+  vec4 position = uMatrix * aPosition;
 
   vQuadCoord = aTexCoord;
 
-  gl_Position = vec4(position, 0, 1);
+  gl_Position = position;
 
 }

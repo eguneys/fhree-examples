@@ -1,5 +1,3 @@
-import { Moves } from './ctrl';
-
 import * as drag from './drag';
 
 export function bindDocument(ctrl) {

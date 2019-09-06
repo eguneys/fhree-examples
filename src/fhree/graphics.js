@@ -1,11 +1,6 @@
-import { objMap } from './util2';
-import * as u from './util';
+import { objMap } from '../util2';
 
-import mat3 from './matrix';
-
-export default function Graphics(state, gl) {
-
-  const { width, height } = state.game;
+export default function Graphics(gl) {
 
   gl.clearColor(0, 0, 0, 1);
   // https://stackoverflow.com/questions/57612782/how-to-render-objects-without-blending-with-transparency-enabled-in-webgl/57613578#57613578
@@ -17,119 +12,6 @@ export default function Graphics(state, gl) {
 
   this.minibatch = [];
 
-  this.prCache = {};
-
-  this.makePrograms = (prs) => {
-    
-    Object.keys(prs).forEach(key => {
-      let { vSource, fSource } = prs[key];
-
-      this.prCache[key] = makeProgram(gl, vSource, fSource);
-    });
-
-  };
-
-  this.addTexture = (quad, props = {}, uniforms = {}) => {
-    addQuad(quad, {
-      uTexture: [],
-      ...uniforms,
-      ...baseUniforms(props, quad)
-    });
-  };
-
-  this.addQuad = (quad, props = {}, uniforms = {}, numVertices) => {
-    addQuad(quad, {
-      ...uniforms,
-      ...baseUniforms(props, quad)
-    }, numVertices);
-  };
-
-  const baseUniforms = ({
-    width : w,
-    height : h,
-    pivot,
-    translation,
-    rotation,
-    scale
-  }, quad) =>
-  {
-    w = w || width;
-    h = h || height;
-    pivot = pivot || [w * 0.5, h * 0.5];
-    translation = translation || [0, 0];
-    rotation = rotation || 0;
-    scale = scale || [1.0, 1.0];
-
-    const uMatrix = mat3.transform([width, height],
-                                  translation,
-                                  rotation,
-                                  scale,
-                                  pivot);
-
-    return {
-      uResolution: [gl.canvas.width, gl.canvas.height],
-      uMatrix: [uMatrix]
-    };
-  };
-
-  const addQuad = (quad, uniformArgs, numVertices = 6) => {
-    const cookUniforms = Object.keys(quad.uniforms).map(key => {
-      let setter = quad.uniforms[key];
-      let args = uniformArgs[key];
-      return () => {
-        if (!args) {
-          throw new Error("undefined uniform " + key);
-        }
-        setter(...args);
-      };
-    });
-    this.minibatch.push({...quad, uniforms: cookUniforms, numVertices });
-  };
-
-  this.makeQuad = (drawInfo,
-                   width,
-                   height) =>
-  {
-
-    let left = 0,
-        right = width,
-        down = 0,
-        up = height;
-    let positionPoss = [left, down,
-                        left, up,
-                        right, down,
-                        left, up,
-                        right, down,
-                        right, up];
-
-    left = -1;
-    right = 1;
-    down = -1;
-    up = 1;
-    
-    let texCoordPoss = [left, down,
-                        left, up,
-                        right, down,
-                        left, up,
-                        right, down,
-                        right, up];
-
-    const posInfo = new makeBufferInfoForAttribute("aPosition", 2),
-          texInfo = new makeBufferInfoForAttribute("aTexCoord", 2);
-
-    let bufferInfos = [
-      posInfo,
-      texInfo
-    ];
-
-    let res = this.makeDraw({...drawInfo, bufferInfos });
-
-    posInfo.set(positionPoss, gl.STATIC_DRAW);
-    texInfo.set(texCoordPoss, gl.STATIC_DRAW);
-
-    return res;
-  };
-
   this.makeDraw = ({
     name,
     program,
@@ -138,7 +20,6 @@ export default function Graphics(state, gl) {
     bufferInfos
   }) => {
 
-    program = this.prCache[program];
     textureInfos = textureInfos || [];
 
     let vao = makeVao(gl, bufferInfos.map(_ => _.apply(gl, program)));
@@ -152,6 +33,25 @@ export default function Graphics(state, gl) {
     };
   };
 
+
+  this.addDrawInfo = (drawInfo, uniforms, numVertices) => {
+    addDrawInfo(drawInfo, uniforms, numVertices);
+  };
+
+  const addDrawInfo = (drawInfo, uniformArgs, numVertices = 6) => {
+    const cookUniforms = Object.keys(drawInfo.uniforms).map(key => {
+      let setter = drawInfo.uniforms[key];
+      let args = uniformArgs[key];
+      return () => {
+        if (!args) {
+          throw new Error("undefined uniform " + key);
+        }
+        setter(...args);
+      };
+    });
+    this.minibatch.push({...drawInfo, uniforms: cookUniforms, numVertices });
+  };
+  
   this.render = () => {
 
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
@@ -279,8 +179,10 @@ export const makeUniform2fvSetter = withGLLocation((gl, location) => (vec) => gl
 
 export const makeUniform3fvSetter = withGLLocation((gl, location) => (matrix) => gl.uniformMatrix3fv(location, false, matrix));
 
+export const makeUniform4fvSetter = withGLLocation((gl, location) => (matrix) => gl.uniformMatrix4fv(location, false, matrix));
 
-const makeProgram = (gl, vSource, fSource) => {
+
+export const makeProgram = (gl, vSource, fSource) => {
   let vShader = createShader(gl, gl.VERTEX_SHADER, vSource);
   let fShader = createShader(gl, gl.FRAGMENT_SHADER, fSource);
 

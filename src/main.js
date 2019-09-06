@@ -1,12 +1,11 @@
 import defaults from './state';
 
-import { programMap } from './shaders';
-
 import Assets from './assets';
 
-import Graphics from './graphics';
-import makeView from './view';
-import makeCtrl from './ctrl';
+import makeRenderer from './renderer';
+
+import makeView from './view/main';
+import makeCtrl from './ctrl/main';
 import Loop from 'loopz';
 
 import * as events from './events';
@@ -32,25 +31,22 @@ export function app(element, options) {
         bounds: canvas.getBoundingClientRect()
       };
 
-      let graphics = new Graphics(state, gl);
+      let { camera, renderer } = makeRenderer(gl);
 
-      graphics.makePrograms(programMap);
-
-      let ctrl = new makeCtrl(state, graphics);
-      let view = new makeView(ctrl, graphics, assets);
+      let ctrl = new makeCtrl(state);
+      let view = new makeView(ctrl, renderer, assets);
 
       new Loop(delta => {
         ctrl.update(delta);
-        ctrl.data.views = view.render(ctrl);
-        graphics.render();
-        view.release();
-      }, 60).start();
+        view.render(ctrl);
+        renderer.render();
+      }, 1).start();
 
       events.bindDocument(ctrl);
 
 
       if (module.hot) {
-        module.hot.accept('./ctrl', function() {
+        module.hot.accept('./ctrl/main', function() {
           try {
             ctrl = new makeCtrl(state, graphics);
           } catch (e) {
@@ -58,7 +54,7 @@ export function app(element, options) {
           }
         });
         module.hot.accept
-        (['./view'], function() 
+        (['./view/main'], function() 
          {
            try {
              view = new makeView(ctrl, graphics, assets);

@@ -1,8 +1,8 @@
-import * as u from './util';
+import * as u from '../util';
 
-import Pool from './pool';
+import Pool from '../pool';
 
-import makePlay from './ctrl/play';
+import makePlay from './play';
 
 export default function ctrl(state, g) {
   const defaults = () => ({
