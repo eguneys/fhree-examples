@@ -31,7 +31,8 @@ export default function Renderer(gl, camera) {
     drawInfos = objMap
     (mess, (_, { name = _, 
                  program: programName,
-                 geometry }) => 
+                 geometry,
+                 material }) => 
      new Pool(id => {
        
        let program = prCache[programName];
@@ -43,9 +44,15 @@ export default function Renderer(gl, camera) {
          console.warn("Undefined geometry for mesh " + name);
        }
 
+
+       const uTextureInfo = 
+             new G.makeTextureInfoForUniform("uTexture");
+
        const aPosInfo = new G.makeBufferInfoForAttribute
-       ("aPosition", { target: g.gl.ARRAY_BUFFER,
-                       size: 3 });
+       ("aPosition", { size: 3 });
+
+       const aTexCoordInfo = new G.makeBufferInfoForAttribute
+       ("aTexCoord", { size: 2 });
 
 
        const mesh = g.makeDraw({
@@ -54,13 +61,20 @@ export default function Renderer(gl, camera) {
          uniforms: {
            "uMatrix": G.makeUniform4fvSetter("uMatrix")
          },
+         textureInfos: [
+           uTextureInfo
+         ],
          bufferInfos: [
-           aPosInfo
+           aPosInfo,
+           aTexCoordInfo
          ],
          indices: geometry.indices
        });
 
+       uTextureInfo.set(material);
+
        aPosInfo.set(geometry.vertices, g.gl.STATIC_DRAW);
+       aTexCoordInfo.set(geometry.uvs, g.gl.STATIC_DRAW);
        
        return mesh;
      })
@@ -104,11 +118,13 @@ export default function Renderer(gl, camera) {
       throw new Error("undefined mesh " + name);
     }
 
+    let drawInfo = drawInfoPool.acquire();
+
     let uniforms = {
       uMatrix: [uMatrix]
     };
 
-    g.addDrawInfo(drawInfoPool.acquire(), uniforms, 6);
+    g.addDrawInfo(drawInfo, uniforms, drawInfo.numElements);
   };
 
   this.render = () => {

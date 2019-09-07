@@ -1,14 +1,23 @@
-export const meshMap = {
-  'sample': {
-    program: 'main',
-    geometry: BoxGeometry(200)
-  }
+export default function meshMap(assets) {
+
+  return {
+    'sample': {
+      program: 'main',
+      geometry: BoxGeometry(200)
+    },
+    'cubeUv': {
+      program: 'texture',
+      material: assets['uvgrid'],
+      geometry: BoxGeometry(200)
+    }
+  };
 };
 
 function BoxGeometry(width = 1, height = width, depth = width) {
   
 
   let vertices = [],
+      uvs = [],
       indices = [];
 
   let widthHalf = width / 2,
@@ -31,12 +40,27 @@ function BoxGeometry(width = 1, height = width, depth = width) {
     vertices[i+2] -= depthHalf;
   }
 
-  indices.push(0, 1, 2);
-  // indices.push(2, 3, 0);
+  uvs.push(0, 1);
+  uvs.push(0, 0);
+  uvs.push(1, 0);
+  uvs.push(1, 1);
+
+  uvs.push(0, 1);
+  uvs.push(0, 0);
+  uvs.push(1, 0);
+  uvs.push(1, 1);
+
+
 
   indices.push(4, 5, 6);
+  indices.push(6, 7, 4);
+
+
+  indices.push(0, 1, 2);
+  indices.push(2, 3, 0);
   
 
-  return { vertices, 
+  return { vertices,
+           uvs,
            indices };
 }

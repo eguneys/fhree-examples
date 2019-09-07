@@ -1,27 +1,22 @@
 import * as u from '../util';
 
-export default function camera(ctrl, g) {
+export default function camera(ctrl, camera) {
 
   const { width, height } = ctrl.data.game;
 
-  let camera;
-  this.init = () => {
-    this.data = camera = { ...defaults() };
+  this.init = delta => {
+    camera.pos = [0.0, 0.0, 100];
   };
 
-  let centerAt = width * 0.2;
+  let theta = 0;
 
   this.update = delta => {
-    const hero = ctrl.hero,
-          { x: heroX } = hero.data;
+    theta += delta * 0.01;
 
-    if (heroX < centerAt) {
-      camera.x = heroX - centerAt;
-    }
+    theta %= u.TAU;
+
+    camera.pos[0] = Math.cos(theta) * 700.0;
+    camera.pos[2] = Math.sin(theta) * 700.0;
   };
-
-  const defaults = () => ({
-    x: 0
-  });
 
 }

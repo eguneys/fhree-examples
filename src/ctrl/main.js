@@ -1,10 +1,8 @@
 import * as u from '../util';
 
-import Pool from '../pool';
+import cameraController from './camera';
 
-import makePlay from './play';
-
-export default function ctrl(state, g) {
+export default function ctrl(state, camera) {
   const defaults = () => ({
     tick: 0,
     draggable: {}
@@ -12,28 +10,21 @@ export default function ctrl(state, g) {
 
   this.data = { ...defaults(), ...state };
 
-  this.play = new makePlay(this, g);
+  this.cameraController = new cameraController(this, camera);
 
-  this.play.init(this);
+  this.cameraController.init({});
 
   this.spaceHit = () => {
-    if (this.data.state === u.States.Play) {
-      this.play.hero.userJump();
-    } else {
-      this.play.init(this);
-      this.data.state = u.States.Play;
-    }
+
   };
 
   this.spaceRelease = () => {
-    if (this.data.state === u.States.Play) {
-      this.play.hero.userReleaseJump();
-    }
+
   };
 
   this.update = delta => {
     this.data.tick += delta;
 
-    this.play.update(delta);
+    this.cameraController.update(delta);
   };
 }

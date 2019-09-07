@@ -11,6 +11,6 @@ export default function Camera({ fov = u.rad(70),
   this.far = far;
 
   this.pos = [0, 0, 0];
-  this.target = [0, 0.5, 1.0];
+  this.target = [0, 0, 0];
   this.up = [0, 1, 0];
 }

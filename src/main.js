@@ -2,6 +2,9 @@ import defaults from './state';
 
 import Assets from './assets';
 
+import { programMap } from './shaders';
+import makeMeshes from './meshes';
+
 import makeRenderer from './renderer';
 
 import makeView from './view/main';
@@ -22,7 +25,7 @@ export function app(element, options) {
 
 
   new Assets({
-    'glyps': 'assets/font_10.png'
+    'uvgrid': 'assets/ash_uvgrid01.jpg'
   }).start()
     .then(assets => {
 
@@ -31,10 +34,18 @@ export function app(element, options) {
         bounds: canvas.getBoundingClientRect()
       };
 
-      let aspect = 1/state.game.ratio;
-      let { camera, renderer } = makeRenderer(gl, aspect);
 
-      let ctrl = new makeCtrl(state);
+
+      let meshMap = makeMeshes(assets);
+      
+      let aspect = 1/state.game.ratio;
+      let { camera, renderer } = makeRenderer(gl, {
+        programMap,
+        meshMap,
+        aspect
+      });
+
+      let ctrl = new makeCtrl(state, camera);
       let view = new makeView(ctrl, renderer, assets);
 
       new Loop(delta => {
@@ -49,7 +60,7 @@ export function app(element, options) {
       if (module.hot) {
         module.hot.accept('./ctrl/main', function() {
           try {
-            ctrl = new makeCtrl(state, graphics);
+            ctrl = new makeCtrl(state, camera);
           } catch (e) {
             console.log(e);
           }
@@ -58,7 +69,7 @@ export function app(element, options) {
         (['./view/main'], function() 
          {
            try {
-             view = new makeView(ctrl, graphics, assets);
+             view = new makeView(ctrl, renderer, assets);
            } catch (e) {
              console.log(e);
            }

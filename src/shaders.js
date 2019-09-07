@@ -3,6 +3,9 @@ import { objMap } from './util2';
 import vMainShader from './shaders/main.vert';
 import fMainShader from './shaders/main.frag';
 
+import vTextureShader from './shaders/texture.vert';
+import fTextureShader from './shaders/texture.frag';
+
 import pFColorsShader from './shaders/colors.partial.frag';
 import pFDefsShader from './shaders/defs.partial.frag';
 import pFUtilShader from './shaders/util.partial.frag';
@@ -15,7 +18,9 @@ const partialShaders = {
 
 const rawShaders = {
   'vmain': vMainShader,
-  'fmain': fMainShader
+  'fmain': fMainShader,
+  'vtexture': vTextureShader,
+  'ftexture': fTextureShader
 };
 
 const shaderMap = objMap(rawShaders,
@@ -28,7 +33,8 @@ const shaderPair = (vSource, fSource) => ({
 
 
 export const programMap = ({
-  'main': shaderPair('vmain', 'fmain')
+  'main': shaderPair('vmain', 'fmain'),
+  'texture': shaderPair('vtexture', 'ftexture')
 });
 
 

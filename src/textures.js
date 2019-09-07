@@ -11,36 +11,12 @@ export default function textures() {
   return tss;
 };
 
-// const gridTexture = () => withCanvasTexture(1024, 1024, (w, h, ctx, canvas) => {
-//   const gap = h * 0.01;
-
-//   ctx.strokeStyle = 'white';
-//   ctx.lineWidth = 1;
-//   ctx.beginPath();
-
-//   ctx.fillStyle = 'white';
-//   ctx.moveTo(0, 0);
-//   // ctx.fillRect(0, 0, 100, 100);
-
-//   for (let i = 0; i < w; i+= gap) {
-//     ctx.moveTo(i, 0);
-//     ctx.lineTo(i, h);
-//   }
-//   for (let i = 0; i < h; i+= gap) {
-//     ctx.moveTo(0, i);
-//     ctx.lineTo(w, i);
-//   }
-//   ctx.stroke();
-
-//   return canvas;
-// });
-
 const labelTexture = (label) => {
   return withCanvasTexture(label.length * 100 * 0.5, 100, (w, h,  ctx, canvas) => {
 
 
-   // ctx.fillStyle = 'edrfe34v uyhtgrfecd nred';
-    // ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = 'red';
+    ctx.fillRect(0, 0, w, h);
     ctx.font = 'bold 50pt Arial';
     ctx.fillStyle = 'black';
     ctx.textAlign = 'center';

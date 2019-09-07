@@ -2,13 +2,19 @@
 
 precision mediump float;
 
+#include fdefs
+
 uniform sampler2D uTexture;
 
-in vec2 vQuadCoord;
+in vec2 vTexCoord;
 
 out vec4 outColor;
 
+#include futil
+
 void main() {
-  outColor = texture(uTexture, vQuadCoord);
-  //outColor = vec4(1.0, 0.0, 0.0, 1.0);
+
+  vec4 col = texture(uTexture, vTexCoord);
+
+  outColor = col;
 }

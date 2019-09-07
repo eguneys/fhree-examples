@@ -35,7 +35,8 @@ export default function Graphics(gl) {
       program,
       vao,
       textureInfos: textureInfos.map(_ => _.apply(gl, program)),
-      uniforms: objMap(uniforms, (_, v) => v(gl, program))
+      uniforms: objMap(uniforms, (_, v) => v(gl, program)),
+      numElements: indices.length
     };
   };
 
@@ -157,26 +158,27 @@ export function makeTextureInfoForUniform(name) {
           type = gl.UNSIGNED_BYTE;
     gl.texImage2D(gl.TEXTURE_2D, 0, format, format, type, texture);
 
+    gl.generateMipmap(gl.TEXTURE_2D);
+
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
   };
 }
 
 export function makeBufferInfoForAttribute(name, {
-  target,
   size }) {
   let gl, buffer;
 
   this.set = (array, {
     drawType = gl.STATIC_DRAW
   }) => {
-    gl.bindBuffer(target, buffer);
-    gl.bufferData(target, new Float32Array(array), drawType);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(array), drawType);
   },
 
   this.apply = (_gl, program) => {
@@ -185,7 +187,6 @@ export function makeBufferInfoForAttribute(name, {
     return {
       buffer,
       size,
-      target,
       index: gl.getAttribLocation(program, name)
     };
   };
