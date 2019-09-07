@@ -1,19 +1,16 @@
 import Camera from './fhree/camera';
 import Renderer from './fhree/renderer';
 
-export default function makeRenderer(gl, {
-  meshMap,
-  programMap,
-  aspect
-}) {
+export default function makeRenderer(state) {
 
-  const camera = new Camera({ aspect });
+  const { width, height, gl } = state.canvas;
 
-  const renderer = new Renderer(gl, camera);
+  const renderer = new Renderer(gl);
 
-  renderer.makePrograms(programMap);
+  this.render = () => {
 
-  renderer.makeMeshes(meshMap);
+    renderer.render();
 
-  return { renderer, camera };  
+  };
+
 }

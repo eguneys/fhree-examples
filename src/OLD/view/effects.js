@@ -10,13 +10,17 @@ export default function view(ctrl, r) {
     r.makeTransform('root', {
       translate: [0, 0, 0],
       rotate: [0.0,
-               0.0, // u.usin(tick*0.01) * u.PI,
+               0.0,
                0.0]
     });
 
     r.drawMesh('cubeUv', {
       transform: 'root',
       translate: [0.0, 0.0, 0.0]
+    });
+
+    r.drawMesh('cubeUv', {
+      translate: [0.0, 100.0, 0.0]
     });
 
   };

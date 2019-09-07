@@ -1,19 +1,4 @@
-export default function meshMap(assets) {
-
-  return {
-    'sample': {
-      program: 'main',
-      geometry: BoxGeometry(200)
-    },
-    'cubeUv': {
-      program: 'texture',
-      material: assets['uvgrid'],
-      geometry: BoxGeometry(200)
-    }
-  };
-};
-
-function BoxGeometry(width = 1, height = width, depth = width) {
+export default function BoxGeometry(width = 1, height = width, depth = width) {
   
 
   let vertices = [],

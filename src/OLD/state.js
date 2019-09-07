@@ -14,7 +14,7 @@ export default function defaults(width, height) {
   };
 
   return {
-    game
+    game,
   };
  
 }

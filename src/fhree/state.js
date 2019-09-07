@@ -8,7 +8,7 @@ import * as mat4 from './matrix';
 
 import Pool from '../pool';
 
-export default function Renderer(gl, camera) {
+export default function DrawState(gl, camera) {
 
   let g = new Graphics(gl);
 

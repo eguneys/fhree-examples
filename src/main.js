@@ -1,75 +1,36 @@
-import defaults from './state';
-
 import Assets from './assets';
 
-import { programMap } from './shaders';
-import makeMeshes from './meshes';
+import makeCanvas from './canvas';
+import makeExamples from './examples/main';
 
-import makeRenderer from './renderer';
-
-import makeView from './view/main';
-import makeCtrl from './ctrl/main';
 import Loop from 'loopz';
 
-import * as events from './events';
-
 export function app(element, options) {
-
-  const canvas = document.createElement('canvas'),
-        gl = canvas.getContext('webgl2');
-  element.append(canvas);
-  const displayWidth = canvas.clientWidth,
-        displayHeight = canvas.clientHeight;
-  canvas.width = displayWidth;
-  canvas.height = displayHeight;
-
 
   new Assets({
     'uvgrid': 'assets/ash_uvgrid01.jpg'
   }).start()
     .then(assets => {
 
+      const canvas = new makeCanvas(element);
+
       const state = {
-        ...defaults(displayWidth, displayHeight),
-        bounds: canvas.getBoundingClientRect()
+        canvas
       };
 
-
-
-      let meshMap = makeMeshes(assets);
-      
-      let aspect = 1/state.game.ratio;
-      let { camera, renderer } = makeRenderer(gl, {
-        programMap,
-        meshMap,
-        aspect
-      });
-
-      let ctrl = new makeCtrl(state, camera);
-      let view = new makeView(ctrl, renderer, assets);
+      let examples = new makeExamples(state, canvas.gl);
 
       new Loop(delta => {
-        ctrl.update(delta);
-        view.render(ctrl);
-        renderer.render();
-      }, 10).start();
-
-      events.bindDocument(ctrl);
+        examples.update(delta);
+      }, 1).start();
 
 
       if (module.hot) {
-        module.hot.accept('./ctrl/main', function() {
-          try {
-            ctrl = new makeCtrl(state, camera);
-          } catch (e) {
-            console.log(e);
-          }
-        });
         module.hot.accept
-        (['./view/main'], function() 
+        (['./examples/main'], function() 
          {
            try {
-             view = new makeView(ctrl, renderer, assets);
+             examples = new makeExamples(state);
            } catch (e) {
              console.log(e);
            }
