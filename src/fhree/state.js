@@ -108,7 +108,7 @@ export default function DrawState(gl, camera) {
     return mat4.multiply(viewProjectionMatrix, modelMatrix);
   };
 
-  this.drawMesh = (name, uniforms, transform) => {
+  this.drawMesh = (name, uniforms, transform = {}) => {
 
     const uMatrix = mvpMatrix(modelMatrix(transform));
 
@@ -121,8 +121,9 @@ export default function DrawState(gl, camera) {
     let drawInfo = drawInfoPool.acquire();
 
     uniforms = {
-      ...uniforms,
-      uMatrix: [uMatrix]
+      uMatrix: [uMatrix],
+      uDiffuse: [[0xff, 0xff, 0xff]],
+      ...uniforms
     };
 
     g.addDrawInfo(drawInfo, uniforms, drawInfo.numElements);
