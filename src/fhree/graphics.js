@@ -204,9 +204,11 @@ export const makeUniform2fSetter = withGLLocation((gl, location) => (...args) =>
 
 export const makeUniform2fvSetter = withGLLocation((gl, location) => (vec) => gl.uniform2fv(location, vec));
 
-export const makeUniform3fvSetter = withGLLocation((gl, location) => (matrix) => gl.uniformMatrix3fv(location, false, matrix));
+export const makeUniform3fvSetter = withGLLocation((gl, location) => (vec) => gl.uniform3fv(location, vec));
 
-export const makeUniform4fvSetter = withGLLocation((gl, location) => (matrix) => gl.uniformMatrix4fv(location, false, matrix));
+export const makeUniformM3fvSetter = withGLLocation((gl, location) => (matrix) => gl.uniformMatrix3fv(location, false, matrix));
+
+export const makeUniformM4fvSetter = withGLLocation((gl, location) => (matrix) => gl.uniformMatrix4fv(location, false, matrix));
 
 
 export const makeProgram = (gl, vSource, fSource) => {

@@ -26,10 +26,19 @@ export default function example(state, makeDrawState) {
   ds.makePrograms(programMap);
   ds.makeMeshes(meshMap);
 
+  let rotate = [0, 0, 0];
+
   this.update = delta => {
+    const dt = delta * 0.1;
+
+    rotate[0] += dt * 0.01;
+    rotate[1] += dt * 0.01;
+
     ds.drawMesh('sphereBasic', {
+      uDiffuse: [[0x00, 0x00, 0xff]]
+    }, {
       translate: [0, 0, 0],
-      rotate: [0, 0, 0]
+      rotate
     });
   };
   

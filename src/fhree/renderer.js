@@ -58,7 +58,8 @@ export default function Renderer(gl, camera) {
          name,
          program,
          uniforms: {
-           "uMatrix": G.makeUniform4fvSetter("uMatrix")
+           "uMatrix": G.makeUniform4fvSetter("uMatrix"),
+           "uColor": G.makeUniform1fSetter("uColor")
          },
          textureInfos: [
            uTextureInfo

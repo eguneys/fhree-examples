@@ -4,8 +4,8 @@ precision mediump float;
 
 #include fdefs
 
-uniform float uTime;
-uniform vec2 uResolution;
+uniform vec3 uDiffuse;
+
 
 in vec2 vQuadCoord;
 
@@ -15,7 +15,7 @@ out vec4 outColor;
 
 void main() {
 
-  vec4 col = vec4(1.0, 0.0, 0.0, 1.0);
+  vec4 diffuse = vec4(uDiffuse, 1.0);
 
-  outColor = col;
+  outColor = diffuse;
 }

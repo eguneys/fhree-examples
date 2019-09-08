@@ -22,7 +22,7 @@ export function app(element, options) {
 
       new Loop(delta => {
         examples.update(delta);
-      }, 1).start();
+      }, 50).start();
 
 
       if (module.hot) {
@@ -30,7 +30,7 @@ export function app(element, options) {
         (['./examples/main'], function() 
          {
            try {
-             examples = new makeExamples(state);
+             examples = new makeExamples(state, canvas.gl);
            } catch (e) {
              console.log(e);
            }

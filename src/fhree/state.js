@@ -58,7 +58,8 @@ export default function DrawState(gl, camera) {
          name,
          program,
          uniforms: {
-           "uMatrix": G.makeUniform4fvSetter("uMatrix")
+           "uMatrix": G.makeUniformM4fvSetter("uMatrix"),
+           "uDiffuse": G.makeUniform3fvSetter("uDiffuse"),
          },
          textureInfos: [
            uTextureInfo
@@ -107,7 +108,7 @@ export default function DrawState(gl, camera) {
     return mat4.multiply(viewProjectionMatrix, modelMatrix);
   };
 
-  this.drawMesh = (name, transform) => {
+  this.drawMesh = (name, uniforms, transform) => {
 
     const uMatrix = mvpMatrix(modelMatrix(transform));
 
@@ -119,7 +120,8 @@ export default function DrawState(gl, camera) {
 
     let drawInfo = drawInfoPool.acquire();
 
-    let uniforms = {
+    uniforms = {
+      ...uniforms,
       uMatrix: [uMatrix]
     };
 
